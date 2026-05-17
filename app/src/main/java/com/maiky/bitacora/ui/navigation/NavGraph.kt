@@ -13,9 +13,12 @@ import androidx.navigation.navArgument
 import com.maiky.bitacora.ui.screen.addedit.AddEditScreen
 import com.maiky.bitacora.ui.screen.home.HomeScreen
 import com.maiky.bitacora.ui.screen.search.SearchScreen
+import com.maiky.bitacora.ui.screen.settings.SettingsScreen
+import com.maiky.bitacora.ui.screen.splash.SplashScreen
 import com.maiky.bitacora.ui.screen.statistics.StatisticsScreen
 
 sealed class Screen(val route: String) {
+    data object Splash : Screen("splash")
     data object Home : Screen("home")
     data object AddEdit : Screen("add_edit?activityId={activityId}&date={date}") {
         fun createRoute(activityId: Long = -1L, date: String = "") =
@@ -25,6 +28,7 @@ sealed class Screen(val route: String) {
     data object Statistics : Screen("statistics?date={date}") {
         fun createRoute(date: String) = "statistics?date=$date"
     }
+    data object Settings : Screen("settings")
 }
 
 private const val ANIM_DURATION = 300
@@ -33,7 +37,7 @@ private const val ANIM_DURATION = 300
 fun BitacoraNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Splash.route,
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Start,
@@ -59,6 +63,16 @@ fun BitacoraNavGraph(navController: NavHostController) {
             ) + fadeOut(animationSpec = tween(ANIM_DURATION))
         }
     ) {
+        composable(Screen.Splash.route) {
+            SplashScreen(
+                onSplashFinished = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToAddEdit = { activityId, date ->
@@ -69,6 +83,9 @@ fun BitacoraNavGraph(navController: NavHostController) {
                 },
                 onNavigateToStatistics = { date ->
                     navController.navigate(Screen.Statistics.createRoute(date))
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Screen.Settings.route)
                 }
             )
         }
@@ -110,6 +127,12 @@ fun BitacoraNavGraph(navController: NavHostController) {
             )
         ) {
             StatisticsScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }

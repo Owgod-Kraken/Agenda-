@@ -1,5 +1,6 @@
 package com.maiky.bitacora.ui.screen.search
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,7 +46,7 @@ import com.maiky.bitacora.ui.theme.CompletedGreen
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreen(
     onNavigateBack: () -> Unit,
@@ -120,7 +121,7 @@ fun SearchScreen(
                         SearchResultCard(
                             activity = activity,
                             onClick = { onNavigateToEdit(activity.id, activity.date) },
-                            modifier = Modifier.animateItem()
+                            modifier = Modifier.animateItemPlacement()
                         )
                     }
                     item { Spacer(modifier = Modifier.height(16.dp)) }

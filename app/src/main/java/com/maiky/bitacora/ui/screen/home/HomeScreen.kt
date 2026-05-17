@@ -3,6 +3,7 @@ package com.maiky.bitacora.ui.screen.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -45,12 +47,13 @@ import com.maiky.bitacora.ui.screen.home.components.FilterChips
 import com.maiky.bitacora.ui.screen.home.components.StatsBar
 import java.time.ZoneOffset
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     onNavigateToAddEdit: (Long, String) -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToStatistics: (String) -> Unit,
+    onNavigateToSettings: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val activities by viewModel.activities.collectAsStateWithLifecycle()
@@ -70,14 +73,17 @@ fun HomeScreen(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text("Bitácora de maiky")
+                    Text("App Fechas")
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(Icons.Default.Search, contentDescription = "Buscar")
                     }
                     IconButton(onClick = { onNavigateToStatistics(viewModel.getDateString()) }) {
-                        Icon(Icons.Default.BarChart, contentDescription = "Estadísticas")
+                        Icon(Icons.Default.BarChart, contentDescription = "Estad\u00edsticas")
+                    }
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = "Configuraci\u00f3n")
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -150,7 +156,7 @@ fun HomeScreen(
                             activityToDelete = activity.id
                             showDeleteDialog = true
                         },
-                        modifier = Modifier.animateItem()
+                        modifier = Modifier.animateItemPlacement()
                     )
                 }
             }

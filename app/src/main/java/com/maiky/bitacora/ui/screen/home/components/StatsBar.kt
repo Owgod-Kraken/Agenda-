@@ -54,8 +54,9 @@ fun StatsBar(
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
+        @Suppress("DEPRECATION")
         LinearProgressIndicator(
-            progress = { progress },
+            progress = progress,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(6.dp)

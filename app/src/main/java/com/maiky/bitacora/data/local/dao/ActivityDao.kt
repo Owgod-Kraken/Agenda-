@@ -72,4 +72,49 @@ interface ActivityDao {
 
     @Query("SELECT * FROM activities WHERE time IS NOT NULL AND isCompleted = 0")
     suspend fun getAllPendingActivitiesWithTime(): List<ActivityEntity>
+
+    @Query("""
+        SELECT * FROM activities 
+        WHERE date LIKE :yearMonth || '%'
+        ORDER BY date ASC, time ASC
+    """)
+    fun getActivitiesByMonth(yearMonth: String): Flow<List<ActivityEntity>>
+
+    @Query("""
+        SELECT * FROM activities 
+        WHERE date >= :startDate AND date <= :endDate
+        ORDER BY date ASC, time ASC
+    """)
+    fun getActivitiesByDateRange(startDate: String, endDate: String): Flow<List<ActivityEntity>>
+
+    @Query("""
+        SELECT * FROM activities 
+        WHERE category = :category
+        ORDER BY date DESC, time ASC
+    """)
+    fun getActivitiesByCategory(category: String): Flow<List<ActivityEntity>>
+
+    @Query("SELECT COUNT(*) FROM activities WHERE date LIKE :yearMonth || '%'")
+    fun getMonthlyActivityCount(yearMonth: String): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM activities WHERE date LIKE :yearMonth || '%' AND isCompleted = 1")
+    fun getMonthlyCompletedCount(yearMonth: String): Flow<Int>
+
+    @Query("""
+        SELECT category, COUNT(*) as count FROM activities 
+        WHERE date LIKE :yearMonth || '%'
+        GROUP BY category
+    """)
+    fun getCategoryCountsByMonth(yearMonth: String): Flow<List<CategoryCount>>
+
+    @Query("SELECT * FROM activities ORDER BY date DESC, time ASC")
+    fun getAllActivities(): Flow<List<ActivityEntity>>
+
+    @Query("SELECT * FROM activities WHERE date >= :today AND isCompleted = 0 ORDER BY date ASC, time ASC LIMIT :limit")
+    fun getUpcomingActivities(today: String, limit: Int = 10): Flow<List<ActivityEntity>>
 }
+
+data class CategoryCount(
+    val category: String,
+    val count: Int
+)

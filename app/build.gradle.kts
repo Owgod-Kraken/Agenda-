@@ -114,6 +114,15 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
+    // DataStore
+    implementation(libs.datastore.preferences)
+
+    // Lottie
+    implementation(libs.lottie.compose)
+
+    // Splash Screen
+    implementation(libs.splashscreen)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
