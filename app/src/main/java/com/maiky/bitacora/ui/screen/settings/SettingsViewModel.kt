@@ -1,7 +1,6 @@
 package com.maiky.bitacora.ui.screen.settings
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maiky.bitacora.data.preferences.AppTheme
 import com.maiky.bitacora.data.preferences.DarkModeOption
@@ -16,10 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    application: Application
-) : AndroidViewModel(application) {
-
-    private val themePreferences = ThemePreferences.getInstance(application)
+    private val themePreferences: ThemePreferences
+) : ViewModel() {
 
     val themeSettings: StateFlow<ThemeSettings> = themePreferences.themeSettings
         .stateIn(

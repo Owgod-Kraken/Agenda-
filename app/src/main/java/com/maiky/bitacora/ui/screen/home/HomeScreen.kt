@@ -3,6 +3,7 @@ package com.maiky.bitacora.ui.screen.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -46,7 +47,7 @@ import com.maiky.bitacora.ui.screen.home.components.FilterChips
 import com.maiky.bitacora.ui.screen.home.components.StatsBar
 import java.time.ZoneOffset
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     onNavigateToAddEdit: (Long, String) -> Unit,
@@ -155,7 +156,7 @@ fun HomeScreen(
                             activityToDelete = activity.id
                             showDeleteDialog = true
                         },
-                        modifier = Modifier.animateItem()
+                        modifier = Modifier.animateItemPlacement()
                     )
                 }
             }

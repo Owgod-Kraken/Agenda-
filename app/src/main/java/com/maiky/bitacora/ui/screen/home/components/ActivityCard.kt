@@ -29,10 +29,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,19 +61,19 @@ fun ActivityCard(
 ) {
     var isVisible by remember { mutableStateOf(true) }
 
-    val dismissState = rememberSwipeToDismissBoxState(
+    val dismissState = rememberDismissState(
         confirmValueChange = { dismissValue ->
             when (dismissValue) {
-                SwipeToDismissBoxValue.EndToStart -> {
+                DismissValue.DismissedToStart -> {
                     isVisible = false
                     onDelete()
                     true
                 }
-                SwipeToDismissBoxValue.StartToEnd -> {
+                DismissValue.DismissedToEnd -> {
                     onToggleComplete()
                     false
                 }
-                SwipeToDismissBoxValue.Settled -> false
+                DismissValue.Default -> false
             }
         }
     )
@@ -83,25 +83,26 @@ fun ActivityCard(
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        SwipeToDismissBox(
+        @Suppress("DEPRECATION")
+        androidx.compose.material3.SwipeToDismiss(
             state = dismissState,
-            backgroundContent = {
+            background = {
                 val direction = dismissState.dismissDirection
                 val color by animateColorAsState(
                     when (dismissState.targetValue) {
-                        SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
-                        SwipeToDismissBoxValue.StartToEnd -> CompletedGreen
+                        DismissValue.DismissedToStart -> MaterialTheme.colorScheme.error
+                        DismissValue.DismissedToEnd -> CompletedGreen
                         else -> Color.Transparent
                     },
                     label = "swipeColor"
                 )
                 val icon = when (direction) {
-                    SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
-                    SwipeToDismissBoxValue.StartToEnd -> Icons.Default.CheckCircle
+                    DismissDirection.EndToStart -> Icons.Default.Delete
+                    DismissDirection.StartToEnd -> Icons.Default.CheckCircle
                     else -> Icons.Default.Delete
                 }
                 val alignment = when (direction) {
-                    SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                    DismissDirection.EndToStart -> Alignment.CenterEnd
                     else -> Alignment.CenterStart
                 }
 
@@ -120,8 +121,7 @@ fun ActivityCard(
                     )
                 }
             },
-            modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-        ) {
+            dismissContent = {
             val alpha by animateFloatAsState(
                 targetValue = if (activity.isCompleted) 0.7f else 1f,
                 label = "completedAlpha"
@@ -248,7 +248,9 @@ fun ActivityCard(
                     }
                 }
             }
-        }
+            },
+            modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+        )
     }
 
     LaunchedEffect(activity.id) {

@@ -15,14 +15,17 @@ import com.maiky.bitacora.data.preferences.ThemeSettings
 import com.maiky.bitacora.ui.navigation.BitacoraNavGraph
 import com.maiky.bitacora.ui.theme.BitacoraDeMaikyTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var themePreferences: ThemePreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val themePreferences = ThemePreferences.getInstance(applicationContext)
 
         setContent {
             val themeSettings by themePreferences.themeSettings.collectAsState(
