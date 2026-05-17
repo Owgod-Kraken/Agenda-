@@ -1,6 +1,7 @@
 package com.maiky.bitacora.data.repository
 
 import com.maiky.bitacora.data.local.dao.ActivityDao
+import com.maiky.bitacora.data.local.dao.CategoryCount
 import com.maiky.bitacora.data.local.entity.ActivityEntity
 import com.maiky.bitacora.domain.model.Activity
 import com.maiky.bitacora.domain.repository.ActivityRepository
@@ -59,6 +60,40 @@ class ActivityRepositoryImpl @Inject constructor(
     override suspend fun getAllPendingActivitiesWithTime(): List<Activity> =
         dao.getAllPendingActivitiesWithTime().map { it.toDomain() }
 
+    override fun getActivitiesByMonth(yearMonth: String): Flow<List<Activity>> =
+        dao.getActivitiesByMonth(yearMonth).map { entities ->
+            entities.map { it.toDomain() }
+        }
+
+    override fun getActivitiesByDateRange(startDate: String, endDate: String): Flow<List<Activity>> =
+        dao.getActivitiesByDateRange(startDate, endDate).map { entities ->
+            entities.map { it.toDomain() }
+        }
+
+    override fun getActivitiesByCategory(category: String): Flow<List<Activity>> =
+        dao.getActivitiesByCategory(category).map { entities ->
+            entities.map { it.toDomain() }
+        }
+
+    override fun getMonthlyActivityCount(yearMonth: String): Flow<Int> =
+        dao.getMonthlyActivityCount(yearMonth)
+
+    override fun getMonthlyCompletedCount(yearMonth: String): Flow<Int> =
+        dao.getMonthlyCompletedCount(yearMonth)
+
+    override fun getCategoryCountsByMonth(yearMonth: String): Flow<List<CategoryCount>> =
+        dao.getCategoryCountsByMonth(yearMonth)
+
+    override fun getAllActivities(): Flow<List<Activity>> =
+        dao.getAllActivities().map { entities ->
+            entities.map { it.toDomain() }
+        }
+
+    override fun getUpcomingActivities(today: String, limit: Int): Flow<List<Activity>> =
+        dao.getUpcomingActivities(today, limit).map { entities ->
+            entities.map { it.toDomain() }
+        }
+
     private fun ActivityEntity.toDomain() = Activity(
         id = id,
         title = title,
@@ -66,6 +101,9 @@ class ActivityRepositoryImpl @Inject constructor(
         date = date,
         time = time,
         isCompleted = isCompleted,
+        category = category,
+        location = location,
+        reminderMinutes = reminderMinutes,
         createdAt = createdAt
     )
 
@@ -76,6 +114,9 @@ class ActivityRepositoryImpl @Inject constructor(
         date = date,
         time = time,
         isCompleted = isCompleted,
+        category = category,
+        location = location,
+        reminderMinutes = reminderMinutes,
         createdAt = createdAt
     )
 }

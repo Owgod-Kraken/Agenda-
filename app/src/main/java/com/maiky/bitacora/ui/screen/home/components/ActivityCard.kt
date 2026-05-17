@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.maiky.bitacora.domain.model.Activity
+import com.maiky.bitacora.domain.model.EventCategory
 import com.maiky.bitacora.ui.theme.CompletedGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -163,7 +164,27 @@ fun ActivityCard(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
+                    val categoryColor = try {
+                        Color(EventCategory.fromDisplayName(activity.category).colorHex)
+                    } catch (_: Exception) {
+                        MaterialTheme.colorScheme.primary
+                    }
+
                     Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .background(categoryColor, shape = androidx.compose.foundation.shape.CircleShape)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = activity.category,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = categoryColor
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = activity.title,
                             style = MaterialTheme.typography.titleMedium,
@@ -181,6 +202,17 @@ fun ActivityCard(
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                                 textDecoration = if (activity.isCompleted) TextDecoration.LineThrough else null
+                            )
+                        }
+
+                        if (activity.location.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = activity.location,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.outline,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
 

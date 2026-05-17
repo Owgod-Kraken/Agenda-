@@ -30,8 +30,11 @@ class ReminderScheduler @Inject constructor(
                 LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"))
             )
 
+            val reminderMinutes = if (activity.reminderMinutes > 0) activity.reminderMinutes.toLong() else 0L
+            val reminderTime = dateTime.minusMinutes(reminderMinutes)
+
             val now = LocalDateTime.now()
-            val delay = Duration.between(now, dateTime).toMillis()
+            val delay = Duration.between(now, reminderTime).toMillis()
 
             if (delay <= 0) return
 

@@ -67,7 +67,7 @@ object PdfExporter {
                 strokeWidth = 1f
             }
 
-            canvas.drawText("Bitácora de maiky", margin, yPosition, titlePaint)
+            canvas.drawText("App Fechas", margin, yPosition, titlePaint)
             yPosition += 25f
 
             val formattedDate = try {
@@ -113,6 +113,16 @@ object PdfExporter {
 
                 if (activity.time != null) {
                     canvas.drawText("  Hora: ${activity.time}", margin + 10, yPosition, subtitlePaint)
+                    yPosition += 16f
+                }
+
+                if (activity.category.isNotBlank()) {
+                    canvas.drawText("  Categor\u00eda: ${activity.category}", margin + 10, yPosition, subtitlePaint)
+                    yPosition += 16f
+                }
+
+                if (activity.location.isNotBlank()) {
+                    canvas.drawText("  Ubicaci\u00f3n: ${activity.location}", margin + 10, yPosition, subtitlePaint)
                     yPosition += 16f
                 }
 

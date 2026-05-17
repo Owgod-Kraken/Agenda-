@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maiky.bitacora.domain.model.Activity
+import com.maiky.bitacora.domain.model.EventCategory
 import com.maiky.bitacora.domain.usecase.AddActivityUseCase
 import com.maiky.bitacora.domain.usecase.GetActivityByIdUseCase
 import com.maiky.bitacora.domain.usecase.UpdateActivityUseCase
@@ -26,6 +27,9 @@ data class AddEditState(
     val date: String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
     val time: String? = null,
     val enableReminder: Boolean = false,
+    val reminderMinutes: Int = 15,
+    val category: String = EventCategory.PERSONAL.displayName,
+    val location: String = "",
     val isEditing: Boolean = false,
     val titleError: String? = null,
     val isLoading: Boolean = false
@@ -75,6 +79,10 @@ class AddEditViewModel @Inject constructor(
                     description = activity.description,
                     date = activity.date,
                     time = activity.time,
+                    category = activity.category,
+                    location = activity.location,
+                    reminderMinutes = if (activity.reminderMinutes > 0) activity.reminderMinutes else 15,
+                    enableReminder = activity.reminderMinutes > 0,
                     isEditing = true,
                     isLoading = false
                 )
@@ -105,6 +113,18 @@ class AddEditViewModel @Inject constructor(
         _state.value = _state.value.copy(enableReminder = enabled)
     }
 
+    fun onReminderMinutesChange(minutes: Int) {
+        _state.value = _state.value.copy(reminderMinutes = minutes)
+    }
+
+    fun onCategoryChange(category: String) {
+        _state.value = _state.value.copy(category = category)
+    }
+
+    fun onLocationChange(location: String) {
+        _state.value = _state.value.copy(location = location)
+    }
+
     fun onSave() {
         val currentState = _state.value
 
@@ -115,12 +135,17 @@ class AddEditViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                val reminderMin = if (currentState.enableReminder) currentState.reminderMinutes else 0
+
                 if (currentState.isEditing && currentActivity != null) {
                     val updated = currentActivity!!.copy(
                         title = currentState.title.trim(),
                         description = currentState.description.trim(),
                         date = currentState.date,
-                        time = currentState.time
+                        time = currentState.time,
+                        category = currentState.category,
+                        location = currentState.location.trim(),
+                        reminderMinutes = reminderMin
                     )
                     updateActivity(updated)
 
@@ -132,7 +157,10 @@ class AddEditViewModel @Inject constructor(
                         title = currentState.title.trim(),
                         description = currentState.description.trim(),
                         date = currentState.date,
-                        time = currentState.time
+                        time = currentState.time,
+                        category = currentState.category,
+                        location = currentState.location.trim(),
+                        reminderMinutes = reminderMin
                     )
                     val id = addActivity(activity)
 

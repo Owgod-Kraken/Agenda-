@@ -22,7 +22,7 @@ object CsvExporter {
             val file = File(dir, "bitacora_$date.csv")
 
             FileWriter(file).use { writer ->
-                writer.append("ID,Título,Descripción,Fecha,Hora,Completada\n")
+                writer.append("ID,T\u00edtulo,Descripci\u00f3n,Fecha,Hora,Categor\u00eda,Ubicaci\u00f3n,Completada\n")
 
                 for (activity in activities) {
                     writer.append(
@@ -31,7 +31,9 @@ object CsvExporter {
                         "\"${activity.description.replace("\"", "\"\"")}\"," +
                         "${activity.date}," +
                         "${activity.time ?: ""}," +
-                        "${if (activity.isCompleted) "Sí" else "No"}\n"
+                        "${activity.category}," +
+                        "\"${activity.location.replace("\"", "\"\"")}\"," +
+                        "${if (activity.isCompleted) "S\u00ed" else "No"}\n"
                     )
                 }
             }
